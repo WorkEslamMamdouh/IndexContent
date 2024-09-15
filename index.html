@@ -3,141 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YouTube Player</title>
-</head>
-<body>
-
-
-
-    <div id="DivBulid">
-
-
-
-    </div>
-
-
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-    <script>
-
-
-        var currentUrl = window.location.href;
-        var parts = currentUrl.split('$$');
-         
-
-        if (parts.length > 1) {
-
-
-            var APIUrl = atob(parts[1].trim()) // http://apiserver.somee.com/
-            var controller = atob(parts[2].trim()) // System
-            var action = atob(parts[3].trim()) // GetDataFrom
-            var MapPath = atob(parts[4].trim()) // 619
-            var Name_txt = atob(parts[5].trim()) // SerUrl
-
-            //var action = "GetDataFrom";
-            //var Name_txt = "SerUrl";
-            //var controller = atob('U3lzdGVt');
-            //var APIUrl = atob('aHR0cDovL2FwaXNlcnZlci5zb21lZS5jb20v'); // http
-            //var MapPath = "619"
-
-            var CallUrl = APIUrl + controller + "/" + action;
-
-            //console.log(CallUrl);
-
-
-            var players = [];  // Array to store all YouTube players
-            var videoData = []; // Store video data to initialize players after API is ready
-
-
-
-
-            $.ajax({
-                type: "Get",
-                url: CallUrl,
-                data: {
-                    Name_txt: Name_txt, MapPath: MapPath
-                },
-                headers: {
-                    'Accept': 'application/json; charset=utf-8  ',
-                    'Content-Type': 'application/json'
-                },
-                success: function (data) {
-
-                    const dataObject = JSON.parse(data.Response);
-
-                    for (var i = 0; i < dataObject.length; i++) {
-                        var url = dataObject[i].Url;
-                        var IsShow = dataObject[i].IsShow;
-                        var ISLive = dataObject[i].ISLive;
-
-                        videoData.push({ index: i, url: url });  // Store the data needed for each video
-
-
-                        var DivBulid = document.getElementById('DivBulid');
-
-                        // Create a new iframe element
-                        let iframe = document.createElement('iframe');
-                        iframe.src = url + '?enablejsapi=1&mute=1';
-                        iframe.id = 'youtubePlayer' + i;
-                        iframe.width = '560';
-                        iframe.height = '315';
-                        iframe.setAttribute('frameborder', '0');
-                        iframe.allow = 'autoplay; encrypted-media';
-
-
-                        if (!ISLive) {
-                            iframe.style.display = "none";
-                        }
-
-                        if (!IsShow) {
-                            iframe.style.display = "none";
-                        }
-
-                        DivBulid.appendChild(iframe);
-                    }
-
-                    // Load YouTube IFrame Player API asynchronously
-                    var tag = document.createElement('script');
-                    tag.src = "https://www.youtube.com/iframe_api";
-                    var firstScriptTag = document.getElementsByTagName('script')[0];
-                    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
-
-
-                },
-                error: function (error) {
-
-
-                    console.error("Error:", error);
-                    $(".waitMe").removeAttr("style").fadeOut(2500);
-                }
-            })
-
-
-
-
-            // YouTube API will call this function when the API is loaded and ready
-            function onYouTubeIframeAPIReady() {
-                // Initialize all players stored in videoData
-                videoData.forEach(function (video) {
-                    players[video.index] = new YT.Player('youtubePlayer' + video.index, {
-                        events: {
-                            'onReady': onPlayerReady
-                        }
-                    });
-                });
-            }
-
-            // Function called when each player is ready
-            function onPlayerReady(event) {
-                event.target.playVideo(); // Start the video playback
-            }
-
-            //************************************************************************
+    <title>Full Screen Iframe</title>
+    <style>
+        /* Remove any margin/padding from body and html */
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
         }
 
-
-    </script>
-
+        /* The iframe will take up 100% of the screen */
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none; /* Remove border if needed */
+        }
+    </style>
+</head>
+<body>
+    <!-- Full-screen iframe -->
+    <iframe src="http://www.indexcontent.somee.com/Index.html?$$aHR0cDovL2FwaXNlcnZlci5zb21lZS5jb20v$$U3lzdGVt$$R2V0RGF0YUZyb20=$$NjE5$$U2VyVXJs"></iframe>
 </body>
 </html>
